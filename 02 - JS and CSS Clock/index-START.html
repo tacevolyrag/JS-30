@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>JS + CSS Clock</title>
+</head>
+
+<body>
+
+
+  <div class="clock">
+    <div class="clock-face">
+      <div class="hand hour-hand"></div>
+      <div class="hand min-hand"></div>
+      <div class="hand second-hand"></div>
+    </div>
+  </div>
+
+
+  <style>
+    html {
+      background: #018DED url(https://unsplash.it/1500/1000?image=881&blur=5);
+      background-size: cover;
+      font-family: 'helvetica neue';
+      text-align: center;
+      font-size: 10px;
+    }
+
+    body {
+      margin: 0;
+      font-size: 2rem;
+      display: flex;
+      flex: 1;
+      min-height: 100vh;
+      align-items: center;
+    }
+
+    .clock {
+      width: 30rem;
+      height: 30rem;
+      border: 20px solid white;
+      border-radius: 50%;
+      margin: 50px auto;
+      position: relative;
+      padding: 2rem;
+      box-shadow:
+        0 0 0 4px rgba(0, 0, 0, 0.1),
+        inset 0 0 0 3px #EFEFEF,
+        inset 0 0 10px black,
+        0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .clock-face {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform: translateY(-3px);
+      /* account for the height of the clock hands */
+    }
+
+    .clock-face::after {
+      display: block;
+      content: '';
+      width: 30px;
+      height: 30px;
+      background-color: #fff;
+      border-radius: 100%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      ;
+      z-index: 0;
+    }
+
+    .hand {
+      /* width: 50%;
+      height: 6px;
+      background: black;
+      position: absolute;
+      top: 50%; */
+      width: 100%;
+      height: 100%;
+      position: absolute;
+    }
+
+
+    .hour-hand::after {
+      display: block;
+      content: '';
+      height: 80px;
+      width: 10px;
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translate(-50%);
+      background-color: #000000;
+    }
+
+    .min-hand::after {
+      display: block;
+      content: '';
+      height: 120px;
+      width: 5px;
+      position: absolute;
+      top: 5%;
+      left: 50%;
+      transform: translate(-50%);
+      background-color: #000000;
+    }
+
+    .second-hand::after {
+      display: block;
+      content: '';
+      height: 140px;
+      width: 3px;
+      position: absolute;
+      top: 0%;
+      left: 50%;
+      transform: translate(-50%);
+      background-color: yellow;
+    }
+  </style>
+
+  <script>
+    // 目的：時鐘的秒針、分針、時針照現實時間跑
+    // 過程：1. 選取各針作為要啟用 transform 的 DOM 元素。
+    //      2. 使用 new Date() 取得現實時間並分別給各針秒分時的數值(getSecend,getMinute,getHour);
+    //      3. 秒針為 60 秒為 1 分鐘；分針為 60 分為 1 小時，使用 rotate (0~360deg) 搭配 setInterval() or requestAnimationFream or setTimeout()來達到自轉效果。
+    //        3-1 360deg, (360 / 60 = 6deg) 為秒、分針走一秒鐘及一分鐘的角度(6deg)； (360 / 12 = 30deg) 為時針走一小時的角度(30deg)。
+    //        3-2 秒針跑 60 秒的過程，分針會隨著秒鐘而不斷漸進角度，時針也是隨分鐘而漸進角度。 
+    //           因此分針：(360 / 60 = 6deg) +   6 / 60   　<-- 每一分鐘為 6deg / 60秒。
+    //               時針：(360 / 12 = 30deg) +  30 / 60   <-- 每一鐘頭為 30deg / 60分。
+    const hourdom = document.querySelector('.hour-hand');
+    const mindom = document.querySelector('.min-hand');
+    const secdom = document.querySelector('.second-hand');
+
+    function clock() {
+      // 取得目前時間
+      const nowTime = new Date();
+      const hourNowTime = nowTime.getHours();
+      const minNowTime = nowTime.getMinutes();
+      const secNowTime = nowTime.getSeconds();
+      // 設定時、分、秒的角度
+      const hourDegrees = hourNowTime * 30 + minNowTime * 6 / 360;
+      const minDegrees = minNowTime * 6 + secNowTime * 6 / 360;
+      const secDegrees = secNowTime * 6;
+      // 給予 dom 元素 style 時、分、秒 transform rotate
+      hourdom.style.transform = `rotate(${hourDegrees}deg)`;
+      mindom.style.transform = `rotate(${minDegrees}deg)`;
+      secdom.style.transform = `rotate(${secDegrees}deg)`;
+      requestAnimationFrame(clock);
+    }
+    
+    // setInterval(clock, 1000);
+    requestAnimationFrame(clock);
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>JS Drum Kit</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+
+  <div class="keys">
+    <div data-key="65" class="key">
+      <kbd>A</kbd>
+      <span class="sound">clap</span>
+    </div>
+    <div data-key="83" class="key">
+      <kbd>S</kbd>
+      <span class="sound">hihat</span>
+    </div>
+    <div data-key="68" class="key">
+      <kbd>D</kbd>
+      <span class="sound">kick</span>
+    </div>
+    <div data-key="70" class="key">
+      <kbd>F</kbd>
+      <span class="sound">openhat</span>
+    </div>
+    <div data-key="71" class="key">
+      <kbd>G</kbd>
+      <span class="sound">boom</span>
+    </div>
+    <div data-key="72" class="key">
+      <kbd>H</kbd>
+      <span class="sound">ride</span>
+    </div>
+    <div data-key="74" class="key">
+      <kbd>J</kbd>
+      <span class="sound">snare</span>
+    </div>
+    <div data-key="75" class="key">
+      <kbd>K</kbd>
+      <span class="sound">tom</span>
+    </div>
+    <div data-key="76" class="key">
+      <kbd>L</kbd>
+      <span class="sound">tink</span>
+    </div>
+  </div>
+
+  <audio data-key="65" src="sounds/clap.wav"></audio>
+  <audio data-key="83" src="sounds/hihat.wav"></audio>
+  <audio data-key="68" src="sounds/kick.wav"></audio>
+  <audio data-key="70" src="sounds/openhat.wav"></audio>
+  <audio data-key="71" src="sounds/boom.wav"></audio>
+  <audio data-key="72" src="sounds/ride.wav"></audio>
+  <audio data-key="74" src="sounds/snare.wav"></audio>
+  <audio data-key="75" src="sounds/tom.wav"></audio>
+  <audio data-key="76" src="sounds/tink.wav"></audio>
+
+  <script>
+    // 目的：使用者按下鍵盤得到聲音及動畫
+    // 過程：
+    // 1. 透過監聽來取得輸入鍵盤 (keydown, keypress, keyup) 的事件。
+    // 2. 監聽後選取 dom 元素的 data-key 來呼應 e.target.keyCode 觸發音樂及動畫。
+    //  2-1 音樂：按下對應 keyCode 利用 HTML audio 事件開啟音樂 audio.play mdn: https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/audio
+    //           重複按下對應 keyCode 必須把 audio time 歸 0 (重頭開始)，否則可能因為時間還沒結束而重複觸發。
+    //  2-2 動畫：按下對應 keyCode 動態 add class 名稱達到動畫效果 (transition) (classname 'playing' by style.css)，
+    //           按完結束時必須關掉動畫效果 (transition) ，透過每個元素監聽 (transitionend) 來取得 className 並取消。
+    (function () {
+      // window 監聽 keydown 事件
+      window.addEventListener('keydown', addMusicandClass);
+      const keys = document.querySelectorAll('.key');
+      // 使用 querySelectorAll 為 類陣列
+      // forEach 為每個 key 偵聽 transitionend 事件
+      keys.forEach((key) => {
+        key.addEventListener('transitionend', ClassCancel);
+      });
+      // 增加 音樂
+      // --在音樂開始之前把執行時間歸 0
+      // 增加 class
+      // --如果有 dom 增加 className
+      function addMusicandClass(el) {
+        const audio = document.querySelector(`audio[data-key='${el.keyCode}']`);
+        if (audio) {
+          audio.currentTime = 0;
+          audio.play();
+        }
+        const dom = document.querySelector(`.keys div[data-key='${el.keyCode}']`);
+        if (dom) {
+          dom.classList.add('playing');
+        }
+      };
+      // 如果 class 屬性有 transform 就移除 className
+      function ClassCancel(el) {
+        if (el.propertyName === 'transform') {
+          this.classList.remove('playing');
+        }
+      };
+
+    })();
+  </script>
+
+
+</body>
+
+</html>
