@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Scoped CSS Variables and JS</title>
 </head>
+
 <body>
   <h2>Update CSS Variables with <span class='hl'>JS</span></h2>
 
-  <div class="controls">
+  <div class="controlls">
     <label for="spacing">Spacing:</label>
     <input id="spacing" type="range" name="spacing" min="10" max="200" value="10" data-sizing="px">
 
@@ -21,6 +23,25 @@
   <img src="https://source.unsplash.com/7bwQXzbF6KE/800x500">
 
   <style>
+    /* :root 偽元素等同於 html */
+    /* document.querySelector(':root') === document.querySelector('html'); // true */
+    /* document.querySelector(':root') === document.documentElement; // true */
+    /* 建立在 html 的變數，使得 html 裡的元素使用變數都可以吃到 */
+    :root {
+      --base: #ffc600;
+      --spacing: 10px;
+      --blur: 10px;
+    }
+
+    img {
+      padding: var(--spacing);
+      background: var(--base);
+      filter: blur(var(--blur));
+    }
+
+    .hl {
+      color: var(--base);
+    }
 
     /*
       misc styles, nothing to do with CSS variables
@@ -45,7 +66,20 @@
   </style>
 
   <script>
+    // 功能：使用者拖曳 space 以及 blur 會有 padding 以及 模糊漸層的效果，也可以換背景色。
+    // 過程：選取 querySelectorAll inputs 並 forEach 分別偵聽 mousemove(拖曳)、 change(換背景色) 來賦予 style 值。
+    const inputs = document.querySelectorAll('.controlls input');
+    const html = document.querySelector(':root');
+    inputs.forEach(input => {
+      input.addEventListener('change', styleHandler);
+      input.addEventListener('mousemove', styleHandler);
+    });
+    function styleHandler(e) {
+      const px = e.target.dataset.sizing || ''; 
+      html.style.setProperty(`--${this.name}`, this.value + px);
+    }
   </script>
 
 </body>
+
 </html>

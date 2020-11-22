@@ -124,7 +124,7 @@
   </style>
 
   <script>
-    // 目的：時鐘的秒針、分針、時針照現實時間跑
+    // 功能：時鐘的秒針、分針、時針照現實時間跑
     // 過程：1. 選取各針作為要啟用 transform 的 DOM 元素。
     //      2. 使用 new Date() 取得現實時間並分別給各針秒分時的數值(getSecend,getMinute,getHour);
     //      3. 秒針為 60 秒為 1 分鐘；分針為 60 分為 1 小時，使用 rotate (0~360deg) 搭配 setInterval() or requestAnimationFream or setTimeout()來達到自轉效果。
@@ -143,8 +143,8 @@
       const minNowTime = nowTime.getMinutes();
       const secNowTime = nowTime.getSeconds();
       // 設定時、分、秒的角度
-      const hourDegrees = hourNowTime * 30 + minNowTime * 6 / 360;
-      const minDegrees = minNowTime * 6 + secNowTime * 6 / 360;
+      const hourDegrees = hourNowTime * 30 + minNowTime * 30 / 60;
+      const minDegrees = minNowTime * 6 + secNowTime * 6 / 60;
       const secDegrees = secNowTime * 6;
       // 給予 dom 元素 style 時、分、秒 transform rotate
       hourdom.style.transform = `rotate(${hourDegrees}deg)`;
