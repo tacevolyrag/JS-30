@@ -26,13 +26,18 @@
     .panels {
       min-height: 100vh;
       overflow: hidden;
+      display: flex;
     }
 
     .panel {
+      flex: 1;
       background: #6B0F9C;
       box-shadow: inset 0 0 0 5px rgba(255,255,255,0.1);
       color: white;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
       align-items: center;
       /* Safari transitionend event.propertyName === flex */
       /* Chrome + FF transitionend event.propertyName === flex-grow */
@@ -43,6 +48,7 @@
       font-size: 20px;
       background-size: cover;
       background-position: center;
+      cursor: pointer;
     }
 
     .panel1 { background-image:url(https://source.unsplash.com/gYl-UtwNg_I/1500x1500); }
@@ -59,6 +65,10 @@
     }
 
     .panel p {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       text-transform: uppercase;
       font-family: 'Amatic SC', cursive;
       text-shadow: 0 0 4px rgba(0, 0, 0, 0.72), 0 0 14px rgba(0, 0, 0, 0.45);
@@ -68,8 +78,20 @@
     .panel p:nth-child(2) {
       font-size: 4em;
     }
-
+    .panel p:first-child {
+      transform: translateY(-100%);
+    }
+    .panel p:last-child {
+      transform: translateY(100%);
+    }
+    .panel.open-active p:first-child {
+      transform: translateY(0);
+    }
+    .panel.open-active p:last-child {
+      transform: translateY(0);
+    }
     .panel.open {
+      flex: 4;
       font-size: 40px;
     }
 
@@ -105,7 +127,25 @@
   </div>
 
   <script>
-
+    // 功能: 用 flex 排版與自訂動畫 + JS 控制 Class 屬性。
+    const panels = document.querySelectorAll('.panel');
+    panels.forEach((panel) => {
+      panel.addEventListener('click', startAnimation);
+      panel.addEventListener('transitionend', endForTranslate)
+    });
+    function startAnimation() {
+      this.classList.toggle('open');
+      // this.classList.toggle('open-active');
+    };
+    // 因為是兩段動畫，因此需要加入 transitionend 來判斷第一段動畫結束在執行第二段。
+    // 第一段：寬度撐開 + 字型變大
+    // 第二段：其他字型從上下滑進來。
+    function endForTranslate(e) {
+      console.dir(e);
+      if (e.propertyName.indexOf('flex')) {
+        this.classList.toggle('open-active');
+      }
+    };
   </script>
 
 
