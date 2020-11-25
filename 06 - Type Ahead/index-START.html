@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Type Ahead 👀</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
   <form class="search-form">
@@ -14,9 +16,51 @@
       <li>or a state</li>
     </ul>
   </form>
-<script>
-const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+  <script>
+    // 功能: 搜尋輸入每一個字時自動搜尋符合 (ajax 串回來的資料) 城市名 or 洲名，並顯示在下方的 list 包括人口
+    // 過程:
+    // 1: ajax 使用 xmlHttpRequest || fetch || axios 取得 api 資料
+    // 2: input 輸入欄位監聽 change、keyup 事件，取得 input.value(搜尋的字) 並用正則表達式來 match 資料
+    const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+    const data = [];
+    fetch(endpoint)
+      .then(res => {
+        return res.json();
+      })
+      .then(apiData => {
+        data.push(...apiData);
+      });
+    const inputSearch = document.querySelector('.search');
+    const list = document.querySelector('.suggestions');
 
-</script>
+    function findMatches(wordToMatch, data) {
+      return data.filter(place => {
+        const regex = new RegExp(wordToMatch, 'gi'); // gi 全域比對並且忽略大小寫;
+        return place.city.match(regex) || place.state.match(regex);
+      })
+    }
+    function numberWithCommas(x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+    function searchHandler() {
+      const matchArray = findMatches(this.value, data);
+      const html = matchArray.map(place => {
+        const regex = new RegExp(this.value, 'gi'); // gi 全域比對並且忽略大小寫;
+        const cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`);
+        const stateName = place.state.replace(regex, `<span class="hl">${this.value}</span>`);
+        return `
+        <li>
+          <span class="name">${cityName}, ${stateName}</span>
+          <span class="population">${numberWithCommas(place.population)}</span>
+        </li>
+        `;
+      }).join('');
+      // 物件轉字串
+      list.innerHTML = html
+    }
+    inputSearch.addEventListener('change', searchHandler);
+    inputSearch.addEventListener('keyup', searchHandler);
+  </script>
 </body>
+
 </html>
