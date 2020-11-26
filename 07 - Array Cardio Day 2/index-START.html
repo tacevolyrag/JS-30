@@ -26,16 +26,33 @@
 
     // Some and Every Checks
     // Array.prototype.some() // is at least one person 19 or older?
+    const date = new Date();
+    const yearNow = date.getFullYear();
+    const someAns = people.some(person => {
+      return (yearNow - person.year) >= 19;
+    })
+    // console.log(someAns); // true  只要一位或以上年齡符合 >= 19 歲就會回傳 true
+
     // Array.prototype.every() // is everyone 19 or older?
+    const everyAns = people.every(person => {
+      return (yearNow - person.year) >= 19;
+    }) 
+    // console.log(everyAns); // false 全部符合條件 >= 19 歲才會回傳 true, 只要有一位不符合就會回傳 false;
 
     // Array.prototype.find()
     // Find is like filter, but instead returns just the one you are looking for
     // find the comment with the ID of 823423
+    const findAns = comments.find(content => {
+      return content.id === 823423;
+    })
+    // console.log(findAns);
 
     // Array.prototype.findIndex()
     // Find the comment with this ID
     // delete the comment with the ID of 823423
-
+    const findIndexAns = comments.findIndex(content => content.id === 823423)
+    const newArr = comments.map(content => content);
+    newArr.splice(findIndexAns, 1);
   </script>
 </body>
 </html>
