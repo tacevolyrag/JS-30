@@ -1,19 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>HTML5 Canvas</title>
 </head>
-<body>
-<canvas id="draw" width="800" height="800"></canvas>
-<script>
-</script>
 
-<style>
-  html, body {
-    margin: 0;
-  }
-</style>
+<body>
+  <canvas id="draw" class="draw" width="800" height="800"></canvas>
+  <script>
+    // https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API
+    // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
+    // 功能： 使用 canvas 繪畫出漸層顏色及漸層寬度的線條。
+    // 監聽： mousedown(使用者按下), mousemove(使用者按下後按住拖曳), mouseup(使用者按下或拖曳後放開), mouseleave(使用者鼠標離開所設置的範圍)
+    const canvas = document.querySelector('#draw');     // 選取 canvas dom 元素
+    const ctx = canvas.getContext('2d'); // 使用 canvas api 裡的 getContext('2d') methods 並給予 ctx
+    canvas.width = window.innerWidth; // 使 canvas dom 元素的寬度設定為使用者瀏覽器可視寬度
+    canvas.height = window.innerHeight; // 使 canvas dom 元素的高度設定為使用者瀏覽器可視高度
+    ctx.lineCap = 'round';  // 設置線條末段形狀為圓形。  預設為 lineCap = 'butt'(線的兩端為線型); 'square'(線的末端為方型)
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 100; // 設置線條寬度
+
+    let isDrawing = false; // 給予繪畫開始開關的設定
+    let widthController = true; // 繪畫開始後(mousemove)的漸層寬度控制
+    let initX = 0; // 初始化 X, Y 座標
+    let initY = 0;
+    let initColor = 0; // 因需要漸層顏色並反覆漸層，使用方式為 hsl ，初始化顏色為 0 度， 漸層顏色(0 ~ 360度) 紅(0)澄(30)黃(60)綠(120)藍(240)靛(270)紫(330) // https://zh.wikipedia.org/wiki/%E8%89%B2%E7%9B%B8
+
+    function draw(e) {
+      if (!isDrawing) return; // 如果不是繪畫模式就回傳 false;
+      ctx.beginPath(); // 開始路徑
+      ctx.strokeStyle = `hsl(${initColor}, 100%, 50%)`; // 動態漸層線條顏色
+      ctx.moveTo(initX, initY); // 起始點
+      ctx.lineTo(e.offsetX, e.offsetY); // 移動中的座標位置(也可以設為固定位置(直接給予座標位))
+      ctx.stroke(); // 開始繪製線條
+
+      initColor < 360 ? initColor++ : initColor = 0; // (line33) 如果 color 低於 360 度就遞增, 大於等於 360 度就歸 0 反覆運作
+      [initX, initY] = [e.offsetX, e.offsetY]; // (line34) 起始點設為使用者所點擊的位置
+      if (ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {  // 如果線條寬度超過等於 100 (widthController --)或是小於等於 1 (widthController++) 設定 widthController 為相對布林值
+        widthController = !widthController;
+      }
+      widthController ? ctx.lineWidth++ : ctx.lineWidth--; // 由於一開始設定為 true 因此寬度會遞增到 100 ，轉換為 false 寬度開始遞減為 1 ，轉換為 true 寬度開始遞加，反覆運作
+    };
+    canvas.addEventListener('mousedown',(e) => {             // 1
+      isDrawing = true;  // 滑鼠點下後開始繪畫模式
+      [initX, initY] = [e.offsetX, e.offsetY]; // 讓初始化的 X, Y 值設為使用者點下去的位置 X Y 開始拖曳 => 2
+    });
+    canvas.addEventListener('mousemove', draw);             // 2
+    canvas.addEventListener('mouseup', () => isDrawing = false);  // 3 
+    canvas.addEventListener('mouseleave', () => isDrawing = false); // 3
+  </script>
+
+  <style>
+    html,
+    body {
+      margin: 0;
+    }
+  </style>
 
 </body>
+
 </html>
