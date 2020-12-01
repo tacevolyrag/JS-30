@@ -18,29 +18,67 @@
     }
 
     // Regular
-
+    console.log('hello'); // 常規正常的 log 方式
+    
     // Interpolated
+    console.log('Hello I am a %s string!', '💩'); // 插入字串到所指定的位置(%s)
 
     // Styled
+    console.log('%c I am some great text', 'font-size:50px; background:red; text-shadow: 10px 10px 0 blue') // 插入樣式到所指定的語句(%c)
 
     // warning!
+    console.warn('OH NOOO'); // console 裡顯示黃字，代表程式可以繼續跑下一行，但可能會有疑慮需要擔心的地方
 
     // Error :|
+    console.error('Shit!'); // 程式出錯，沒辦法繼續跑下一行
 
     // Info
+    console.info('Crocodiles eat 3-4 people per year'); // 像 console 輸出一個信息，旁邊會顯示小小的 'I' 圖標(僅限 firefox)
 
     // Testing
+    const p = document.querySelector('p');
+    console.assert(p.classList.contains('ouch'), 'That is wrong!'); // 前者如果為 false ， 則將後者錯誤訊息顯示到 console 中 ， 如果為 true 則不會顯示
 
     // clearing
+    console.clear();  // console clear 以前的 console 訊息會被替換為 ('Console was cleared') 類似的訊息
 
     // Viewing DOM Elements
+    console.log(p);  // log 顯示 html 結構樣式
+    console.dir(p);  // dir 顯示 dom 元素裡可供用的全部屬性
 
     // Grouping together
+    dogs.forEach(dog => {    // 以群組易閱讀的方式顯示在 console 上，像是 console.table 等等。
+      console.groupCollapsed(`${dog.name}`);
+      console.log(`This is ${dog.name}`);
+      console.log(`${dog.name} is ${dog.age} years old`);
+      console.log(`${dog.name} is ${dog.age * 7} dog years old`);
+      console.groupEnd(`${dog.name}`);
+    });
 
-    // counting
+    // counting    // 顯示重複的字串有幾次
+    console.count('Wes');  
+    console.count('Wes');
+    console.count('Steve');
+    console.count('Steve');
+    console.count('Wes');
+    console.count('Steve');
+    console.count('Wes');
+    console.count('Steve');
+    console.count('Steve');
+    console.count('Steve');
+    console.count('Steve');
+    console.count('Steve');
 
-    // timing
+    // timing 
+    console.time('fetching data'); // 從 time 開始到 timeEnd 中間所花費的時間顯示在 console 裡
+    fetch('https://api.github.com/users/wesbos')
+      .then(data => data.json())
+      .then(data => {
+        console.timeEnd('fetching data');
+        console.log(data);
+      });
 
+    console.table(dogs);
   </script>
 </body>
 </html>
