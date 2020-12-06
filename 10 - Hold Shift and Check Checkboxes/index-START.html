@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Hold Shift to Check Multiple Checkboxes</title>
 </head>
+
 <body>
   <style>
-
     html {
       font-family: sans-serif;
       background: #ffc600;
@@ -17,7 +18,7 @@
       margin: 50px auto;
       background: white;
       border-radius: 5px;
-      box-shadow: 10px 10px 0 rgba(0,0,0,0.1);
+      box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.1);
     }
 
     .item {
@@ -30,7 +31,7 @@
       border-bottom: 0;
     }
 
-    input:checked + p {
+    input:checked+p {
       background: #F9F9F9;
       text-decoration: line-through;
     }
@@ -44,13 +45,13 @@
       padding: 20px;
       transition: background 0.2s;
       flex: 1;
-      font-family:'helvetica neue';
+      font-family: 'helvetica neue';
       font-size: 20px;
       font-weight: 200;
       border-left: 1px solid #D1E2FF;
     }
   </style>
-   <!--
+  <!--
    The following is a common layout you would see in an email client.
 
    When a user clicks a checkbox, holds Shift, and then clicks another checkbox a few rows down, all the checkboxes inbetween those two checkboxes should be checked.
@@ -95,7 +96,25 @@
     </div>
   </div>
 
-<script>
-</script>
+  <script>
+    // 功能: 打勾任一個 checkbox 後， 按住 shift 點選任一個的 checkbox 之間的 checkbox 必須全為打勾完成。
+    const checkboxes = Array.from(document.querySelectorAll('.item input[type="checkbox"]'));
+    // 選用的方法為 slice (用 index 來選取區間範圍)，因此用 Array.from 把偽陣列轉為陣列。
+    checkboxes.forEach(checkbox => { checkbox.addEventListener('click', checkedHandeler) })
+    let firstCheck = null; // 判斷第一個點擊的 checkbox 為 null
+    function checkedHandeler(e) {
+      if (this.checked) { // 如果第一個點擊的 checkbox 被打開後
+        if (e.shiftKey && firstCheck !== null) { // 按住 shift 以及第一個點擊的 checkbox 不為 null
+          let lastCheck = checkboxes.indexOf(this); // 按到的任一個 checkbox index 設為 lastCheck
+          checkboxes.slice(Math.min(firstCheck, lastCheck), Math.max(firstCheck, lastCheck))  // 判斷第一個及後續點擊的 index 何者為小何者為大(有可能是從下點到上or相反)
+            .forEach(sliceChecked => sliceChecked.checked = true); // 把 slice 所區隔出來的區段 checkbox 都打勾
+        }
+        firstCheck = checkboxes.indexOf(this); // 第一個點擊的 checkbox 為當前的 index，如放在 shifeKey 判斷式前會判定與 lastCheck 為同一個 index
+      } else {
+        lastCheck = null;
+      }
+    }
+  </script>
 </body>
+
 </html>
