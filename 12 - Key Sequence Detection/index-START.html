@@ -1,12 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Key Detection</title>
   <script type="text/javascript" src="https://www.cornify.com/js/cornify.js"></script>
 </head>
+
 <body>
-<script>
-</script>
+  <script>
+    // 輸入所設定的密碼就會有圖案或特效出現
+    (function () {
+      const passCode = [87, 85, 76, 65, 76, 65]; //使用 keyCode 來檢視輸入值及答案是否一致
+      const input = [];
+      window.addEventListener('keyup', typeCode);
+      function typeCode(e) {
+        input.push(e.keyCode);
+        input.splice(-passCode.length - 1, input.length - passCode.length);  //  -6 , 1;   -6 === input[0]
+        console.log('通關密碼', passCode, '輸入', input)
+        if (passCode.join('#') === input.join('#')) {  // 把兩個 array 轉成 string 檢視答案是否一致
+          console.log('You are Right!!!');
+          cornify_add();
+        }
+        // input.length >= passCode.length ? input.splice(-input.length, 1) : false;
+        // if (input.length >= passCode.length) {
+        //   input.splice(-input.length, 1);
+        // }
+
+      }
+    })();
+  </script>
 </body>
+
 </html>
